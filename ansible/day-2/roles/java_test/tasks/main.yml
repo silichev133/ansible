@@ -1,0 +1,7 @@
+---
+# tasks file for java_test
+- name: Checking java version
+  shell: java -version
+  register: java_version
+- debug:
+        var: java_version['stderr_lines']

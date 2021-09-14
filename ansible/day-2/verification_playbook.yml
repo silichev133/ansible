@@ -1,0 +1,8 @@
+- name: Verification roles
+  hosts: all
+  become: yes
+  roles:
+    - java_test
+    - tomcat_test
+    - nginx_test
+

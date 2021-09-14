@@ -1,0 +1,44 @@
+- name: Install Apache Tomcat
+  hosts: all
+  become: yes
+
+  vars:
+    tomcat_version: 9.0.52
+
+  tasks:
+  - name: Java install
+    yum:  name=java state=latest
+
+  - name: Download tomcat
+    get_url: url=https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.52/bin/apache-tomcat-9.0.52.tar.gz dest=/opt/apache-tomcat-9.0.52.tar.gz
+    notify: make user for tomcat
+    notify: preparing
+
+  - shell: chown tomcat /opt/apache-tomcat-9.0.52.tar.gz
+
+
+  - name: Unarchive tomcat
+    unarchive:
+     src: /opt/apache-tomcat-9.0.52.tar.gz
+     dest: /opt/tomcat/{{tomcat_version}}
+     remote_src: yes
+
+  - name: Start tomcat server
+    copy:
+      src: /home/vagrant/cm/ansible/day-1/tomcat.service
+      dest: /etc/systemd/system/
+  - shell: chown -R tomcat /opt/tomcat/{{tomcat_version}}
+  - name: reload daemon
+    shell: systemctl daemon-reload
+  - shell: sh -c 'chmod +x /opt/tomcat/9.0.52/apache-tomcat-9.0.52-src/bin/*.sh'
+  - name: start service
+    service: name=tomcat state=started enabled=yes
+
+  - shell: java -version
+    register: java_version
+
+  handlers:
+  - name: make user for tomcat
+    shell: useradd -m -U -d /opt/tomcat tomcat
+  - name: preparing
+    shell: mkdir /opt/tomcat/{{tomcat_version}}

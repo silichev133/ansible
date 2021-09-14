@@ -1,0 +1,55 @@
+---
+# tasks file for tomcat
+- name: Add EPEL repository
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install some basic package
+  package:
+    name: ['wget', 'unzip', 'curl']
+    state: present 
+
+- name: Add tomcat group
+  group: 
+    name: tomcat
+
+- name: Add tomcat user
+  user:
+    name: tomcat
+    group: tomcat
+    home: /opt/tomcat
+    createhome: no
+    system: yes
+
+- name: Download tomcat
+  get_url:
+    url: "{{ tomcat_archive_url }}"
+    dest: "{{ tomcat_archive_dest }}"
+
+- name: Create tomcat directory
+  file: 
+    path: /opt/tomcat
+    state: directory
+    owner: tomcat
+    group: tomcat
+
+- name: Unarchive tomcat
+  unarchive:
+    src: "{{ tomcat_archive_dest }}"
+    dest: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    remote_src: yes
+
+- name: Start and enable tomcat
+  copy:
+    src: /home/vagrant/cm/ansible/day-2/tomcat.service
+    dest: /etc/systemd/system/
+- shell: chown -R tomcat /opt/tomcat
+- shell: sh -c "chmod +x /opt/tomcat/apache-tomcat-9.0.53/bin/*.sh"
+- service: 
+    daemon_reload: yes
+    name: tomcat
+    state: started
+    enabled: yes

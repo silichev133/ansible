@@ -1,0 +1,5 @@
+---
+# defaults file for tomcat
+
+tomcat_archive_url: https://mirror.linux-ia64.org/apache/tomcat/tomcat-9/v9.0.53/bin/apache-tomcat-9.0.53.tar.gz
+tomcat_archive_dest: /opt/tomcat-9.0.53.tar.gz

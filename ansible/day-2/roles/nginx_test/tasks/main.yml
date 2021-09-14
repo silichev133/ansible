@@ -1,0 +1,7 @@
+---
+# tasks file for nginx_test
+- name: Check nginx status
+  command: systemctl status nginx
+  register: result
+- debug:
+    var: result['stdout_lines']
